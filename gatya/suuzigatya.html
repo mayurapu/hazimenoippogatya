@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>数字ルーレット</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:30px;
+    background:#eef8ff;
+    font-family:sans-serif;
+    text-align:center;
+}
+
+.box{
+    max-width:600px;
+    margin:auto;
+    background:white;
+    padding:40px;
+    border-radius:30px;
+    box-shadow:0 0 20px rgba(0,0,0,.15);
+}
+
+h1{
+    font-size:50px;
+    color:#1d4e89;
+}
+
+.setting{
+    font-size:28px;
+    margin:30px 0;
+}
+
+input{
+    width:100px;
+    font-size:28px;
+    text-align:center;
+    border-radius:10px;
+    padding:8px;
+}
+
+button{
+    font-size:30px;
+    padding:18px 40px;
+    border:none;
+    border-radius:20px;
+    background:#4CAF50;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#388e3c;
+}
+
+button:disabled{
+    background:#999;
+}
+
+#number{
+    margin-top:40px;
+    min-height:180px;
+    font-size:120px;
+    font-weight:bold;
+    color:#e91e63;
+}
+
+.message{
+    margin-top:30px;
+    font-size:24px;
+    color:gray;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="box">
+
+<h1>🎲 数字ルーレット 🎲</h1>
+
+<div class="setting">
+
+下限
+
+<input type="number" id="min" value="1">
+
+～
+
+上限
+
+<input type="number" id="max" value="30">
+
+</div>
+
+<button id="startButton" onclick="startRoulette()">
+🎡 スタート！
+</button>
+
+<div id="number">
+？
+</div>
+
+<div class="message">
+
+</div>
+
+</div>
+
+<script>
+
+function randomNumber(min,max){
+
+    return Math.floor(
+        Math.random()*(max-min+1)
+    ) + min;
+
+}
+
+function startRoulette(){
+
+    let min = Number(document.getElementById("min").value);
+    let max = Number(document.getElementById("max").value);
+
+    if(min > max){
+
+        alert("下限と上限を確認してね！");
+
+        return;
+
+    }
+
+    const display = document.getElementById("number");
+    const button = document.getElementById("startButton");
+
+    button.disabled = true;
+
+    let speed = 50;
+    let totalTime = 0;
+
+    function spin(){
+
+        display.innerHTML =
+            randomNumber(min,max);
+
+        totalTime += speed;
+
+        if(totalTime < 3000){
+
+            if(totalTime < 1000){
+
+                speed += 10;
+
+            }
+
+            else if(totalTime < 2000){
+
+                speed += 20;
+
+            }
+
+            else{
+
+                speed += 40;
+
+            }
+
+            setTimeout(spin,speed);
+
+        }
+
+        else{
+
+            let result =
+                randomNumber(min,max);
+
+            display.innerHTML =
+                "<div style='font-size:40px;'>🎉 けってい！</div>" +
+                "<div style='font-size:130px;'>" +
+                result +
+                "</div>";
+
+            button.disabled = false;
+
+        }
+
+    }
+
+    spin();
+
+}
+
+</script>
+
+</body>
+</html>

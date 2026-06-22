@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本ガチャ</title>
+
+<style>
+
+body{
+    font-family:sans-serif;
+    text-align:center;
+    background:#eef7ff;
+    margin:0;
+    padding:20px;
+}
+
+h1{
+    font-size:50px;
+    color:#1d4e89;
+}
+
+#machine{
+    background:white;
+    max-width:700px;
+    margin:auto;
+    border-radius:30px;
+    padding:40px;
+    box-shadow:0 0 20px rgba(0,0,0,.2);
+}
+
+#rarity{
+    font-size:35px;
+    height:50px;
+}
+
+#result{
+    font-size:48px;
+    min-height:160px;
+    margin-top:30px;
+    margin-bottom:30px;
+    font-weight:bold;
+}
+
+button{
+    font-size:30px;
+    padding:20px 40px;
+    border:none;
+    border-radius:20px;
+    background:#4CAF50;
+    color:white;
+}
+
+button:active{
+    transform:scale(.95);
+}
+
+.normal{
+    color:#555;
+}
+
+.rare{
+    color:#2196f3;
+}
+
+.super{
+    color:#ff9800;
+}
+
+.ultra{
+    animation:rainbow 1s infinite;
+}
+
+@keyframes rainbow{
+0%{color:red;}
+20%{color:orange;}
+40%{color:green;}
+60%{color:blue;}
+80%{color:purple;}
+100%{color:red;}
+}
+
+.small{
+    margin-top:30px;
+    color:gray;
+    font-size:22px;
+}
+
+</style>
+</head>
+<body>
+
+<h1>📚 本ガチャ</h1>
+
+<div id="machine">
+
+<div id="rarity">
+なにが出るかな？
+</div>
+
+<div id="result">
+ボタンをおしてね！
+</div>
+
+<button onclick="gacha()">
+🎲 ガチャをする！
+</button>
+
+<div class="small">
+全部読まなくてもOK！<br>
+3ページだけでもOK！
+</div>
+
+</div>
+
+<script>
+
+const normal = [
+"🔵 青い本",
+"🔴 赤い本",
+"🐶 動物の本",
+"🍙 食べ物の本",
+"📚 一番うすい本",
+"📖 マンガじゃない本",
+"⏰ 3分だけ読む",
+"📄 3ページだけ読む",
+"😀 好きなページを見つける",
+"❤️ 好きなキャラを見つける"
+];
+
+const rare = [
+"😂 わらえる本",
+"👻 ドキドキする本",
+"🚀 ぼうけんの本",
+"💬 好きなセリフを見つける",
+"🌟 おすすめを見つける"
+];
+
+const superRare = [
+"❓ 本クイズを作る",
+"📝 しおりを作る",
+"🏆 今日のおすすめ本を決める"
+];
+
+const ultraRare = [
+"🌈先生にクイズを出そう！",
+"🌈友だちにおすすめしよう！",
+"🌈好きな本を自由によもう！"
+];
+
+let allItems=[
+...normal,
+...rare,
+...superRare,
+...ultraRare
+];
+
+function randomItem(arr){
+return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function gacha(){
+
+document.getElementById("result").className="";
+document.getElementById("rarity").className="";
+
+let count=0;
+
+let roulette=setInterval(()=>{
+
+document.getElementById("result").innerHTML=
+randomItem(allItems);
+
+count++;
+
+if(count>25){
+
+clearInterval(roulette);
+
+finish();
+
+}
+
+},100);
+
+}
+
+function finish(){
+
+let n=Math.random();
+
+if(n<0.7){
+
+document.getElementById("rarity").innerHTML="⭐ ノーマル";
+document.getElementById("rarity").className="normal";
+
+document.getElementById("result").innerHTML=
+randomItem(normal);
+
+}
+
+else if(n<0.9){
+
+document.getElementById("rarity").innerHTML="⭐⭐ レア";
+document.getElementById("rarity").className="rare";
+
+document.getElementById("result").innerHTML=
+randomItem(rare);
+
+}
+
+else if(n<0.98){
+
+document.getElementById("rarity").innerHTML="⭐⭐⭐ スーパーレア";
+document.getElementById("rarity").className="super";
+
+document.getElementById("result").innerHTML=
+randomItem(superRare);
+
+}
+
+else{
+
+document.getElementById("rarity").innerHTML=
+"🌈✨ウルトラレア！！✨🌈";
+
+document.getElementById("rarity").className="ultra";
+document.getElementById("result").className="ultra";
+
+document.getElementById("result").innerHTML=
+randomItem(ultraRare);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

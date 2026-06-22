@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>やることルーレット（表示/非表示付き）</title>
+<style>
+  :root{
+    --bg:#eef8ff; --card:#fff; --accent:#1d4e89; --muted:#6b7280;
+    --primary:#4CAF50; --primary-dark:#388e3c; --panel:#f7fbff;
+  }
+  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;background:var(--bg);color:#111}
+  .wrap{max-width:980px;margin:18px auto;padding:14px}
+  h1{color:var(--accent);font-size:32px;margin:0 0 12px;text-align:center}
+  .box{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 6px 20px rgba(15,23,42,0.06)}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin-bottom:12px}
+  .btn{background:var(--primary);color:#fff;border:none;padding:10px 14px;border-radius:10px;font-size:15px;cursor:pointer}
+  .btn:hover{background:var(--primary-dark)}
+  .hint{color:var(--muted);font-size:13px;text-align:center;margin-bottom:8px}
+
+  .section{margin:12px 0;border-radius:10px;padding:10px;background:linear-gradient(180deg,#fbfeff,#f3f9ff)}
+  .section-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .section-title{font-weight:700;color:#0f3b66}
+  .section-actions{display:flex;gap:6px;align-items:center}
+  .small-btn{background:transparent;border:1px solid #dbeafe;padding:6px 8px;border-radius:8px;color:#0f3b66;cursor:pointer;font-size:13px}
+
+  .grid{display:grid;gap:8px;align-items:center}
+  .grid.activities{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:8px}
+  .grid.categories{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:8px}
+
+  .checkbox-label{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:transparent;cursor:pointer}
+  .checkbox-label input{width:18px;height:18px}
+
+  .result{margin-top:12px;text-align:center}
+  #rarity{font-size:26px;min-height:36px}
+  #activity{font-size:28px;margin-top:6px;min-height:40px}
+  #category{font-size:18px;margin-top:6px;color:#2b6cb0;min-height:28px}
+  #step{font-size:22px;margin-top:8px;color:#e91e63;min-height:40px;font-weight:700}
+
+  .muted{color:var(--muted);font-size:13px;text-align:center;margin-top:8px}
+
+  @media (max-width:640px){
+    h1{font-size:24px}
+    .grid.categories{grid-template-columns:repeat(2,1fr)}
+    .grid.activities{grid-template-columns:repeat(2,1fr)}
+    #activity{font-size:20px}
+    #step{font-size:18px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🎲 やることルーレット</h1>
+    <div class="box">
+
+      <div class="controls">
+        <button class="btn" id="startBtn">🎡 スタート</button>
+        <button class="btn" id="showSelectedOnly">選択済みだけ表示</button>
+        <button class="btn" id="showAll">全表示</button>
+        <button class="btn" id="hideAll">全非表示</button>
+      </div>
+
+      <div class="hint">各セクションの「表示/非表示」やフィルタで画面をすっきりできます。何も選ばなければ全てが抽選対象です。</div>
+
+      <!-- 活動セクション -->
+      <div class="section" id="section-activities">
+        <div class="section-head">
+          <div class="section-title">🎯 抽選する活動</div>
+          <div class="section-actions">
+            <button class="small-btn" onclick="toggleSection('section-activities')">表示/非表示</button>
+            <button class="small-btn" onclick="selectAllActivities()">全選択</button>
+            <button class="small-btn" onclick="clearAllActivities()">解除</button>
+          </div>
+        </div>
+        <div class="grid activities" id="activityGrid">
+          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="📚 読書"> 📚 読書</label>
+          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="✏️ お絵描き"> ✏️ お絵描き</label>
+          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="📝 宿題"> 📝 宿題</label>
+          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="🦢 折り紙"> 🦢 折り紙</label>
+          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="🎨 ぬり絵"> 🎨 ぬり絵</label>
+          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="📄 プリント"> 📄 プリント</label>
+        </div>
+      </div>
+
+      <!-- 読書 -->
+      <div class="section" id="section-読書">
+        <div class="section-head">
+          <div class="section-title">📚 読書のカテゴリ</div>
+          <div class="section-actions">
+            <button class="small-btn" onclick="toggleSection('section-読書')">表示/非表示</button>
+            <button class="small-btn" onclick="selectAllCats('📚 読書')">全選択</button>
+            <button class="small-btn" onclick="clearAllCats('📚 読書')">解除</button>
+          </div>
+        </div>
+        <div class="grid categories">
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="絵本"> 絵本</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="物語"> 物語</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="図鑑"> 図鑑</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="マンガ"> マンガ</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="学習本"> 学習本</label>
+        </div>
+      </div>
+
+      <!-- お絵描き -->
+      <div class="section" id="section-お絵描き">
+        <div class="section-head">
+          <div class="section-title">✏️ お絵描きのカテゴリ</div>
+          <div class="section-actions">
+            <button class="small-btn" onclick="toggleSection('section-お絵描き')">表示/非表示</button>
+            <button class="small-btn" onclick="selectAllCats('✏️ お絵描き')">全選択</button>
+            <button class="small-btn" onclick="clearAllCats('✏️ お絵描き')">解除</button>
+          </div>
+        </div>
+        <div class="grid categories">
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="✏️ お絵描き" value="キャラ"> キャラ</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="✏️ お絵描き" value="動物"> 動物</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="✏️ お絵描き" value="食べ物"> 食べ物</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="✏️ お絵描き" value="乗り物"> 乗り物</label>
+        </div>
+      </div>
+
+      <!-- 宿題 -->
+      <div class="section" id="section-宿題">
+        <div class="section-head">
+          <div class="section-title">📝 宿題のカテゴリ</div>
+          <div class="section-actions">
+            <button class="small-btn" onclick="toggleSection('section-宿題')">表示/非表示</button>
+            <button class="small-btn" onclick="selectAllCats('📝 宿題')">全選択</button>
+            <button class="small-btn" onclick="clearAllCats('📝 宿題')">解除</button>
+          </div>
+        </div>
+        <div class="grid categories">
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📝 宿題" value="さんすう"> さんすう</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📝 宿題" value="こくご"> こくご</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📝 宿題" value="英語"> 英語</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📝 宿題" value="ドリル"> ドリル</label>
+        </div>
+      </div>
+
+      <!-- 折り紙 -->
+      <div class="section" id="section-折り紙">
+        <div class="section-head">
+          <div class="section-title">🦢 折り紙のカテゴリ</div>
+          <div class="section-actions">
+            <button class="small-btn" onclick="toggleSection('section-折り紙')">表示/非表示</button>
+            <button class="small-btn" onclick="selectAllCats('🦢 折り紙')">全選択</button>
+            <button class="small-btn" onclick="clearAllCats('🦢 折り紙')">解除</button>
+          </div>
+        </div>
+        <div class="grid categories">
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🦢 折り紙" value="動物"> 動物</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🦢 折り紙" value="花"> 花</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🦢 折り紙" value="乗り物"> 乗り物</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🦢 折り紙" value="ハート"> ハート</label>
+        </div>
+      </div>
+
+      <!-- ぬり絵 -->
+      <div class="section" id="section-ぬり絵">
+        <div class="section-head">
+          <div class="section-title">🎨 ぬり絵のカテゴリ</div>
+          <div class="section-actions">
+            <button class="small-btn" onclick="toggleSection('section-ぬり絵')">表示/非表示</button>
+            <button class="small-btn" onclick="selectAllCats('🎨 ぬり絵')">全選択</button>
+            <button class="small-btn" onclick="clearAllCats('🎨 ぬり絵')">解除</button>
+          </div>
+        </div>
+        <div class="grid categories">
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🎨 ぬり絵" value="キャラ"> キャラ</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🎨 ぬり絵" value="花"> 花</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🎨 ぬり絵" value="乗り物"> 乗り物</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🎨 ぬり絵" value="食べ物"> 食べ物</label>
+        </div>
+      </div>
+
+      <!-- プリント -->
+      <div class="section" id="section-プリント">
+        <div class="section-head">
+          <div class="section-title">📄 プリントの教科</div>
+          <div class="section-actions">
+            <button class="small-btn" onclick="toggleSection('section-プリント')">表示/非表示</button>
+            <button class="small-btn" onclick="selectAllCats('📄 プリント')">全選択</button>
+            <button class="small-btn" onclick="clearAllCats('📄 プリント')">解除</button>
+          </div>
+        </div>
+        <div class="grid categories">
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📄 プリント" value="さんすう"> さんすう</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📄 プリント" value="こくご"> こくご</label>
+          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📄 プリント" value="コグトレ"> コグトレ</label>
+        </div>
+      </div>
+
+      <!-- 結果 -->
+      <div class="result">
+        <div id="rarity">なにが出るかな？</div>
+        <div id="activity">なにをする？</div>
+        <div id="category">どのカテゴリ？</div>
+        <div id="step">どこまでやる？</div>
+      </div>
+
+      <div class="muted">できたら おしまい！ つづけてもOK！ ミッションがおわると、もう1回ガチャ！</div>
+    </div>
+  </div>
+<script>
+/* --- データ定義（既存のミッションを完全に含めた版） --- */
+const activities = ["📚 読書","✏️ お絵描き","📝 宿題","🦢 折り紙","🎨 ぬり絵","📄 プリント"];
+
+const missions = {
+  "📚 読書": {
+    categories: ["絵本","物語","図鑑","マンガ","学習本"],
+    steps: {
+      "絵本":[
+        "1ページ読む","好きな絵を見つける","好きなページを見つける","クイズをつくる",
+        "表紙を見る","タイトルを読む","好きなキャラを見つける","色が好きなページを探す",
+        "1つ質問を考える","お話の続きを想像する"
+      ],
+      "物語":[
+        "1ページ読む","好きな絵を見つける","好きなページを見つける","クイズをつくる",
+        "好きなセリフを見つける","主人公の気持ちを考える","次に何が起こりそうか予想する","好きな場面を選ぶ"
+      ],
+      "図鑑":[
+        "1つ調べる","好きなページを見る","好きな写真を見つける","新しい言葉を1つ覚える","1つメモを書く"
+      ],
+      "マンガ":[
+        "3ページ読む","好きなキャラを見つける","面白かったコマを選ぶ","1つセリフを読む"
+      ],
+      "学習本":[
+        "1ページ読む","好きな絵を見つける","好きなページを見つける","クイズをつくる","1つ調べる","大事な言葉を1つ見つける","まとめを読む"
+      ]
+    }
+  },
+
+  "✏️ お絵描き": {
+    categories: ["キャラ","動物","食べ物","乗り物"],
+    steps: {
+      "キャラ":["1つかく","色をぬる","5分かく","好きなキャラをかく"],
+      "動物":["1ぴきかく","5分かく","好きなどうぶつをかく"],
+      "食べ物":["1つかく","好きな食べものをかく"],
+      "乗り物":["1つかく","好きな乗り物をかく"]
+    }
+  },
+
+  "📝 宿題": {
+    categories: ["さんすう","こくご","英語","ドリル"],
+    steps: {
+      "さんすう":["1問やる","3問やる","5分やる","まちがい直しを1つする"],
+      "こくご":["名前を書く","1問やる","3問やる","漢字を1つ書く","文を1つ読む"],
+      "英語":["1単語書く","1問やる","アルファベットを1行書く"],
+      "ドリル":["1ページやる","半分やる","5分やる"]
+    }
+  },
+
+  "🦢 折り紙": {
+    categories: ["動物","花","乗り物","ハート"],
+    steps: {
+      "動物":["1つ折る","好きなどうぶつを折る"],
+      "花":["半分まで作る","花を1つ折る"],
+      "乗り物":["かみひこうきを作る","乗り物を1つ折る"],
+      "ハート":["1つ完成させる","色をきめてハートを折る"]
+    }
+  },
+
+  "🎨 ぬり絵": {
+    categories: ["キャラ","花","乗り物","食べ物"],
+    steps: {
+      "キャラ":["1色ぬる","好きなところをぬる"],
+      "花":["3色でぬる","小さいところをぬる"],
+      "乗り物":["半分ぬる","5分ぬる"],
+      "食べ物":["好きなところをぬる","1色ぬる"]
+    }
+  },
+
+  "📄 プリント": {
+    categories: ["さんすう","こくご","コグトレ"],
+    steps: {
+      "さんすう":["1問やる","3問やる","5分やる"],
+      "こくご":["名前を書く","1問やる","3問やる"],
+      "コグトレ":["半分やる","形さがしを1つやる"]
+    }
+  }
+};
+
+const rareMission = ["好きなキャラをかく","5分チャレンジ","半分までやる","1つ完成させる"];
+const superMission = ["好きなのをえらんでいい！","先生とそうだんして決める！","今日のおすすめをやる！","新しいことにチャレンジ！"];
+const ultraMission = ["5分自由タイム！","好きなことをえらんでいい！","先生と特別ミッション！","今日はラッキーデー！"];
+
+/* --- ヘルパー（安全ガード付き） --- */
+function randomItem(arr){
+  if(!Array.isArray(arr) || arr.length === 0) return undefined;
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function getSelectedActivities(){
+  const checks = document.querySelectorAll(".actCheck:checked");
+  const selected = Array.from(checks).map(c=>c.value);
+  return selected.length ? selected : activities;
+}
+
+function getSelectedCategoriesFor(act){
+  if(!missions || !missions[act]){
+    console.warn("getSelectedCategoriesFor: missions に該当キーがありません:", act);
+    return []; // 空配列を返して呼び出し側で扱えるようにする
+  }
+  const allCats = Array.isArray(missions[act].categories) ? missions[act].categories : [];
+  const checks = document.querySelectorAll('.catCheck[data-act="'+act+'"]:checked');
+  const selected = Array.from(checks).map(c=>c.value);
+  return selected.length ? selected : allCats;
+}
+
+function getMissionFor(act){
+  if(!missions[act]){
+    console.warn("getMissionFor: 未定義の活動です:", act);
+    return {category:"", step:""};
+  }
+  const cats = getSelectedCategoriesFor(act);
+  if(!Array.isArray(cats) || cats.length === 0){
+    console.warn("getMissionFor: カテゴリが空です for", act);
+    return {category:"", step:""};
+  }
+  const cat = randomItem(cats);
+  if(!cat){
+    console.warn("getMissionFor: ランダムカテゴリ取得失敗 for", act, cats);
+    return {category:"", step:""};
+  }
+  const stepsArr = missions[act].steps && missions[act].steps[cat];
+  if(!Array.isArray(stepsArr) || stepsArr.length === 0){
+    console.warn("getMissionFor: ミッション配列が空です for", act, cat);
+    return {category:cat, step:""};
+  }
+  const step = randomItem(stepsArr) || "";
+  return {category:cat, step:step};
+}
+
+/* --- ルーレット制御（堅牢版） --- */
+let spinnerId = null;
+
+function roulette(){
+  // 多重起動防止
+  if(spinnerId !== null){
+    clearInterval(spinnerId);
+    spinnerId = null;
+  }
+
+  // 表示リセット
+  const rarityEl = document.getElementById("rarity");
+  const stepEl = document.getElementById("step");
+  if(rarityEl) rarityEl.className = "";
+  if(stepEl) stepEl.className = "";
+
+  let count = 0;
+
+  spinnerId = setInterval(()=>{
+    try{
+      const act = randomItem(getSelectedActivities());
+      const activityEl = document.getElementById("activity");
+      if(activityEl) activityEl.textContent = act || "";
+
+      if(missions[act]){
+        const cats = getSelectedCategoriesFor(act);
+        const cat = randomItem(cats);
+        const step = randomItem(missions[act].steps[cat]);
+        const categoryEl = document.getElementById("category");
+        const stepEl2 = document.getElementById("step");
+        if(categoryEl) categoryEl.textContent = cat ? "カテゴリ： " + cat : "";
+        if(stepEl2) stepEl2.textContent = step || "";
+      } else {
+        const categoryEl = document.getElementById("category");
+        const stepEl2 = document.getElementById("step");
+        if(categoryEl) categoryEl.textContent = "";
+        if(stepEl2) stepEl2.textContent = "";
+      }
+
+      count++;
+      // 安全マージン：十分に回したら止める
+      if(count > 40){
+        clearInterval(spinnerId);
+        spinnerId = null;
+        finish();
+      }
+    } catch(err){
+      if(spinnerId !== null){ clearInterval(spinnerId); spinnerId = null; }
+      console.error("roulette error:", err);
+      const rarityEl2 = document.getElementById("rarity");
+      const activityEl2 = document.getElementById("activity");
+      if(rarityEl2) rarityEl2.textContent = "エラーが発生しました";
+      if(activityEl2) activityEl2.textContent = "コンソールを確認してください";
+      const categoryEl2 = document.getElementById("category");
+      const stepEl3 = document.getElementById("step");
+      if(categoryEl2) categoryEl2.textContent = "";
+      if(stepEl3) stepEl3.textContent = "";
+    }
+  }, 90);
+}
+
+function finish(){
+  if(spinnerId !== null){
+    clearInterval(spinnerId);
+    spinnerId = null;
+  }
+
+  try{
+    const r = Math.random();
+
+    if(r < 0.7){
+      const act = randomItem(getSelectedActivities());
+      let catText = "", stepText = "";
+      if(missions[act]){
+        const m = getMissionFor(act);
+        catText = m.category ? "カテゴリ： " + m.category : "";
+        stepText = m.step || "";
+      }
+      const rarityEl = document.getElementById("rarity");
+      if(rarityEl){ rarityEl.textContent = "⭐ ノーマル"; rarityEl.className = "normal"; }
+      const activityEl = document.getElementById("activity");
+      if(activityEl) activityEl.textContent = act || "";
+      const categoryEl = document.getElementById("category");
+      if(categoryEl) categoryEl.textContent = catText;
+      const stepEl = document.getElementById("step");
+      if(stepEl){ stepEl.textContent = stepText; stepEl.className = ""; }
+
+    } else if(r < 0.9){
+      const rarityEl = document.getElementById("rarity");
+      if(rarityEl){ rarityEl.textContent = "⭐⭐ レア"; rarityEl.className = "rare"; }
+      const activityEl = document.getElementById("activity");
+      if(activityEl) activityEl.textContent = "✨ レアミッション";
+      const categoryEl = document.getElementById("category");
+      if(categoryEl) categoryEl.textContent = "";
+      const stepEl = document.getElementById("step");
+      if(stepEl) stepEl.textContent = randomItem(rareMission) || "";
+
+    } else if(r < 0.98){
+      const rarityEl = document.getElementById("rarity");
+      if(rarityEl){ rarityEl.textContent = "⭐⭐⭐ スーパーレア"; rarityEl.className = "super"; }
+      const activityEl = document.getElementById("activity");
+      if(activityEl) activityEl.textContent = "🌟 スーパーミッション";
+      const categoryEl = document.getElementById("category");
+      if(categoryEl) categoryEl.textContent = "";
+      const stepEl = document.getElementById("step");
+      if(stepEl) stepEl.textContent = randomItem(superMission) || "";
+
+    } else {
+      const rarityEl = document.getElementById("rarity");
+      if(rarityEl){ rarityEl.textContent = "🌈✨ ウルトラレア！！"; rarityEl.className = "ultra"; }
+      const activityEl = document.getElementById("activity");
+      if(activityEl) activityEl.textContent = "🎉 ウルトラミッション";
+      const categoryEl = document.getElementById("category");
+      if(categoryEl) categoryEl.textContent = "";
+      const stepEl = document.getElementById("step");
+      if(stepEl){ stepEl.className = "ultra"; stepEl.textContent = randomItem(ultraMission) || ""; }
+    }
+  } catch(err){
+    console.error("finish error:", err);
+    const rarityEl = document.getElementById("rarity");
+    const activityEl = document.getElementById("activity");
+    if(rarityEl) rarityEl.textContent = "結果表示でエラー";
+    if(activityEl) activityEl.textContent = "コンソールを確認してください";
+    const categoryEl = document.getElementById("category");
+    const stepEl = document.getElementById("step");
+    if(categoryEl) categoryEl.textContent = "";
+    if(stepEl) stepEl.textContent = "";
+  }
+}
+
+// 手動停止（デバッグ用）
+function stopRoulette(){
+  if(spinnerId !== null){
+    clearInterval(spinnerId);
+    spinnerId = null;
+    const rarityEl = document.getElementById("rarity");
+    if(rarityEl) rarityEl.textContent = "停止しました";
+  }
+}
+
+/* --- 表示/非表示制御 --- */
+function toggleSection(sectionId){
+  const el = document.getElementById(sectionId);
+  if(!el) return;
+  el.style.display = (el.style.display === "none") ? "" : "none";
+}
+function showAllSections(){ document.querySelectorAll('.section').forEach(s=>s.style.display = ""); }
+function hideAllSections(){ document.querySelectorAll('.section').forEach(s=>s.style.display = "none"); }
+function showSelectedOnly(){
+  const anyActChecked = document.querySelectorAll('.actCheck:checked').length > 0;
+  const actSection = document.getElementById('section-activities');
+  if(actSection) actSection.style.display = anyActChecked ? "" : "none";
+  document.querySelectorAll('.section').forEach(sec=>{
+    if(sec.id === 'section-activities') return;
+    const checked = sec.querySelectorAll('.catCheck:checked').length;
+    sec.style.display = checked ? "" : "none";
+  });
+}
+
+/* --- 選択ヘルパー --- */
+function selectAllActivities(){ document.querySelectorAll('.actCheck').forEach(c=>c.checked=true); }
+function clearAllActivities(){ document.querySelectorAll('.actCheck').forEach(c=>c.checked=false); }
+function selectAllCats(act){ document.querySelectorAll('.catCheck[data-act="'+act+'"]').forEach(c=>c.checked=true); }
+function clearAllCats(act){ document.querySelectorAll('.catCheck[data-act="'+act+'"]').forEach(c=>c.checked=false); }
+
+/* --- イベント登録 --- */
+document.getElementById('startBtn').addEventListener('click', roulette);
+document.getElementById('showSelectedOnly').addEventListener('click', showSelectedOnly);
+document.getElementById('showAll').addEventListener('click', showAllSections);
+document.getElementById('hideAll').addEventListener('click', hideAllSections);
+
+/* 初期表示：全表示 */
+</script>
+</body>
+</html>
