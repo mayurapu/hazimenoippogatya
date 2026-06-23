@@ -138,27 +138,25 @@ let html="";
 
 for(let activity in data){
 
-html+=`
+html += `
 <div class="activity">
 
 <h2>
 
 <input
 type="text"
-value="${data[activity][category][i]}"
-oninput="
-changeMission(
+value="${activity}"
+onchange="
+changeActivity(
 '${activity}',
-'${category}',
-${i},
 this.value
 )
-"
->
+">
 
 <button onclick="deleteActivity('${activity}')">
 🗑
 </button>
+
 </h2>
 `;
 
@@ -395,8 +393,6 @@ value
 data[activity][category][index]=value;
 
 saveData();
-
-drawEditor();
 
 }
 
