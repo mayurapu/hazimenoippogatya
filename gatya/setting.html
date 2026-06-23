@@ -568,7 +568,14 @@ drawEditor();
 
 }
 
+function saveData(){
 
+  localStorage.setItem(
+    "gachaData",
+    JSON.stringify(data)
+  );
+
+}
 drawEditor();
 
 </script>
