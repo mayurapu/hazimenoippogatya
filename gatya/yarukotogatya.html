@@ -49,236 +49,121 @@
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>🎲 やることルーレット</h1>
-    <div class="box">
 
-      <div class="controls">
-        <button class="btn" id="startBtn">🎡 スタート</button>
-        <button class="btn" id="showSelectedOnly">選択済みだけ表示</button>
-        <button class="btn" id="showAll">全表示</button>
-        <button class="btn" id="hideAll">全非表示</button>
-      </div>
+<div class="wrap">
 
-      <div class="hint">各セクションの「表示/非表示」やフィルタで画面をすっきりできます。何も選ばなければ全てが抽選対象です。</div>
+<h1>🎲 やることルーレット</h1>
 
-      <!-- 活動セクション -->
-      <div class="section" id="section-activities">
-        <div class="section-head">
-          <div class="section-title">🎯 抽選する活動</div>
-          <div class="section-actions">
-            <button class="small-btn" onclick="toggleSection('section-activities')">表示/非表示</button>
-            <button class="small-btn" onclick="selectAllActivities()">全選択</button>
-            <button class="small-btn" onclick="clearAllActivities()">解除</button>
-          </div>
-        </div>
-        <div class="grid activities" id="activityGrid">
-          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="📚 読書"> 📚 読書</label>
-          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="✏️ お絵描き"> ✏️ お絵描き</label>
-          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="📝 宿題"> 📝 宿題</label>
-          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="🦢 折り紙"> 🦢 折り紙</label>
-          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="🎨 ぬり絵"> 🎨 ぬり絵</label>
-          <label class="checkbox-label"><input type="checkbox" class="actCheck" value="📄 プリント"> 📄 プリント</label>
-        </div>
-      </div>
+<div class="box">
 
-      <!-- 読書 -->
-      <div class="section" id="section-読書">
-        <div class="section-head">
-          <div class="section-title">📚 読書のカテゴリ</div>
-          <div class="section-actions">
-            <button class="small-btn" onclick="toggleSection('section-読書')">表示/非表示</button>
-            <button class="small-btn" onclick="selectAllCats('📚 読書')">全選択</button>
-            <button class="small-btn" onclick="clearAllCats('📚 読書')">解除</button>
-          </div>
-        </div>
-        <div class="grid categories">
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="絵本"> 絵本</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="物語"> 物語</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="図鑑"> 図鑑</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="マンガ"> マンガ</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📚 読書" value="学習本"> 学習本</label>
-        </div>
-      </div>
+<div class="controls">
+<button class="btn" id="startBtn">🎡 スタート</button>
+<button class="btn" id="showSelectedOnly">選択済みだけ表示</button>
+<button class="btn" id="showAll">全表示</button>
+<button class="btn" id="hideAll">全非表示</button>
+</div>
 
-      <!-- お絵描き -->
-      <div class="section" id="section-お絵描き">
-        <div class="section-head">
-          <div class="section-title">✏️ お絵描きのカテゴリ</div>
-          <div class="section-actions">
-            <button class="small-btn" onclick="toggleSection('section-お絵描き')">表示/非表示</button>
-            <button class="small-btn" onclick="selectAllCats('✏️ お絵描き')">全選択</button>
-            <button class="small-btn" onclick="clearAllCats('✏️ お絵描き')">解除</button>
-          </div>
-        </div>
-        <div class="grid categories">
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="✏️ お絵描き" value="キャラ"> キャラ</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="✏️ お絵描き" value="動物"> 動物</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="✏️ お絵描き" value="食べ物"> 食べ物</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="✏️ お絵描き" value="乗り物"> 乗り物</label>
-        </div>
-      </div>
+<div class="hint">
+各セクションの「表示/非表示」やフィルタで画面をすっきりできます。
+何も選ばなければ全てが抽選対象です。
+</div>
 
-      <!-- 宿題 -->
-      <div class="section" id="section-宿題">
-        <div class="section-head">
-          <div class="section-title">📝 宿題のカテゴリ</div>
-          <div class="section-actions">
-            <button class="small-btn" onclick="toggleSection('section-宿題')">表示/非表示</button>
-            <button class="small-btn" onclick="selectAllCats('📝 宿題')">全選択</button>
-            <button class="small-btn" onclick="clearAllCats('📝 宿題')">解除</button>
-          </div>
-        </div>
-        <div class="grid categories">
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📝 宿題" value="さんすう"> さんすう</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📝 宿題" value="こくご"> こくご</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📝 宿題" value="英語"> 英語</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📝 宿題" value="ドリル"> ドリル</label>
-        </div>
-      </div>
 
-      <!-- 折り紙 -->
-      <div class="section" id="section-折り紙">
-        <div class="section-head">
-          <div class="section-title">🦢 折り紙のカテゴリ</div>
-          <div class="section-actions">
-            <button class="small-btn" onclick="toggleSection('section-折り紙')">表示/非表示</button>
-            <button class="small-btn" onclick="selectAllCats('🦢 折り紙')">全選択</button>
-            <button class="small-btn" onclick="clearAllCats('🦢 折り紙')">解除</button>
-          </div>
-        </div>
-        <div class="grid categories">
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🦢 折り紙" value="動物"> 動物</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🦢 折り紙" value="花"> 花</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🦢 折り紙" value="乗り物"> 乗り物</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🦢 折り紙" value="ハート"> ハート</label>
-        </div>
-      </div>
+<!-- 活動 -->
+<div class="section" id="section-activities">
 
-      <!-- ぬり絵 -->
-      <div class="section" id="section-ぬり絵">
-        <div class="section-head">
-          <div class="section-title">🎨 ぬり絵のカテゴリ</div>
-          <div class="section-actions">
-            <button class="small-btn" onclick="toggleSection('section-ぬり絵')">表示/非表示</button>
-            <button class="small-btn" onclick="selectAllCats('🎨 ぬり絵')">全選択</button>
-            <button class="small-btn" onclick="clearAllCats('🎨 ぬり絵')">解除</button>
-          </div>
-        </div>
-        <div class="grid categories">
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🎨 ぬり絵" value="キャラ"> キャラ</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🎨 ぬり絵" value="花"> 花</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🎨 ぬり絵" value="乗り物"> 乗り物</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="🎨 ぬり絵" value="食べ物"> 食べ物</label>
-        </div>
-      </div>
+<div class="section-head">
 
-      <!-- プリント -->
-      <div class="section" id="section-プリント">
-        <div class="section-head">
-          <div class="section-title">📄 プリントの教科</div>
-          <div class="section-actions">
-            <button class="small-btn" onclick="toggleSection('section-プリント')">表示/非表示</button>
-            <button class="small-btn" onclick="selectAllCats('📄 プリント')">全選択</button>
-            <button class="small-btn" onclick="clearAllCats('📄 プリント')">解除</button>
-          </div>
-        </div>
-        <div class="grid categories">
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📄 プリント" value="さんすう"> さんすう</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📄 プリント" value="こくご"> こくご</label>
-          <label class="checkbox-label"><input type="checkbox" class="catCheck" data-act="📄 プリント" value="コグトレ"> コグトレ</label>
-        </div>
-      </div>
+<div class="section-title">
+🎯 抽選する活動
+</div>
 
-      <!-- 結果 -->
-      <div class="result">
-        <div id="rarity">なにが出るかな？</div>
-        <div id="activity">なにをする？</div>
-        <div id="category">どのカテゴリ？</div>
-        <div id="step">どこまでやる？</div>
-      </div>
+<div class="section-actions">
 
-      <div class="muted">できたら おしまい！ つづけてもOK！ ミッションがおわると、もう1回ガチャ！</div>
-    </div>
-  </div>
+<button class="small-btn"
+onclick="toggleSection('section-activities')">
+表示/非表示
+</button>
+
+<button class="small-btn"
+onclick="selectAllActivities()">
+全選択
+</button>
+
+<button class="small-btn"
+onclick="clearAllActivities()">
+解除
+</button>
+
+</div>
+
+</div>
+
+<div class="grid activities" id="activityGrid">
+</div>
+
+</div>
+
+
+<!-- カテゴリ一覧（自動生成される） -->
+<div id="categoryArea">
+</div>
+
+
+<!-- 結果 -->
+<div class="result">
+
+<div id="rarity">
+なにが出るかな？
+</div>
+
+<div id="activity">
+なにをする？
+</div>
+
+<div id="category">
+どのカテゴリ？
+</div>
+
+<div id="step">
+どこまでやる？
+</div>
+
+</div>
+
+
+<div class="muted">
+できたら おしまい！
+つづけてもOK！
+ミッションがおわると、もう1回ガチャ！
+</div>
+
+</div>
+
+</div>
+
+</body>
+  
 <script>
 /* --- データ定義（既存のミッションを完全に含めた版） --- */
-const activities = ["📚 読書","✏️ お絵描き","📝 宿題","🦢 折り紙","🎨 ぬり絵","📄 プリント"];
+let data = JSON.parse(localStorage.getItem("gachaData"));
 
-const missions = {
-  "📚 読書": {
-    categories: ["絵本","物語","図鑑","マンガ","学習本"],
-    steps: {
-      "絵本":[
-        "1ページ読む","好きな絵を見つける","好きなページを見つける","クイズをつくる",
-        "表紙を見る","タイトルを読む","好きなキャラを見つける","色が好きなページを探す",
-        "1つ質問を考える","お話の続きを想像する"
-      ],
-      "物語":[
-        "1ページ読む","好きな絵を見つける","好きなページを見つける","クイズをつくる",
-        "好きなセリフを見つける","主人公の気持ちを考える","次に何が起こりそうか予想する","好きな場面を選ぶ"
-      ],
-      "図鑑":[
-        "1つ調べる","好きなページを見る","好きな写真を見つける","新しい言葉を1つ覚える","1つメモを書く"
-      ],
-      "マンガ":[
-        "3ページ読む","好きなキャラを見つける","面白かったコマを選ぶ","1つセリフを読む"
-      ],
-      "学習本":[
-        "1ページ読む","好きな絵を見つける","好きなページを見つける","クイズをつくる","1つ調べる","大事な言葉を1つ見つける","まとめを読む"
-      ]
-    }
-  },
+if(!data){
+  alert("設定データがありません");
+}
 
-  "✏️ お絵描き": {
-    categories: ["キャラ","動物","食べ物","乗り物"],
-    steps: {
-      "キャラ":["1つかく","色をぬる","5分かく","好きなキャラをかく"],
-      "動物":["1ぴきかく","5分かく","好きなどうぶつをかく"],
-      "食べ物":["1つかく","好きな食べものをかく"],
-      "乗り物":["1つかく","好きな乗り物をかく"]
-    }
-  },
+const missions = {};
 
-  "📝 宿題": {
-    categories: ["さんすう","こくご","英語","ドリル"],
-    steps: {
-      "さんすう":["1問やる","3問やる","5分やる","まちがい直しを1つする"],
-      "こくご":["名前を書く","1問やる","3問やる","漢字を1つ書く","文を1つ読む"],
-      "英語":["1単語書く","1問やる","アルファベットを1行書く"],
-      "ドリル":["1ページやる","半分やる","5分やる"]
-    }
-  },
+for(let activity in data){
 
-  "🦢 折り紙": {
-    categories: ["動物","花","乗り物","ハート"],
-    steps: {
-      "動物":["1つ折る","好きなどうぶつを折る"],
-      "花":["半分まで作る","花を1つ折る"],
-      "乗り物":["かみひこうきを作る","乗り物を1つ折る"],
-      "ハート":["1つ完成させる","色をきめてハートを折る"]
-    }
-  },
+  missions[activity] = {
+    categories: Object.keys(data[activity]),
+    steps: data[activity]
+  };
 
-  "🎨 ぬり絵": {
-    categories: ["キャラ","花","乗り物","食べ物"],
-    steps: {
-      "キャラ":["1色ぬる","好きなところをぬる"],
-      "花":["3色でぬる","小さいところをぬる"],
-      "乗り物":["半分ぬる","5分ぬる"],
-      "食べ物":["好きなところをぬる","1色ぬる"]
-    }
-  },
+}
 
-  "📄 プリント": {
-    categories: ["さんすう","こくご","コグトレ"],
-    steps: {
-      "さんすう":["1問やる","3問やる","5分やる"],
-      "こくご":["名前を書く","1問やる","3問やる"],
-      "コグトレ":["半分やる","形さがしを1つやる"]
-    }
-  }
-};
+const activities = Object.keys(missions);
 
 const rareMission = ["好きなキャラをかく","5分チャレンジ","半分までやる","1つ完成させる"];
 const superMission = ["好きなのをえらんでいい！","先生とそうだんして決める！","今日のおすすめをやる！","新しいことにチャレンジ！"];
