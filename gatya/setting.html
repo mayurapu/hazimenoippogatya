@@ -568,6 +568,16 @@ drawEditor();
 
 }
 
+function saveData(){
+
+    localStorage.setItem(
+        "gachaData",
+        JSON.stringify(data)
+    );
+
+    console.log("保存しました");
+
+}    
 
 drawEditor();
 
