@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>⚙️ がちゃランド設定</title>
+
+<style>
+
+body{
+    background:#eef8ff;
+    font-family:sans-serif;
+    margin:0;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+    color:#1d4e89;
+}
+
+.box{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:25px;
+}
+
+.activity{
+    background:#f7fbff;
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:30px;
+}
+
+.category{
+    background:white;
+    border-left:8px solid skyblue;
+    padding:15px;
+    margin-top:15px;
+}
+
+.mission{
+    margin-left:30px;
+    margin-top:8px;
+}
+
+button{
+    border:none;
+    background:#4CAF50;
+    color:white;
+    padding:10px 20px;
+    border-radius:15px;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.save{
+    background:#ff9800;
+}
+
+</style>
+</head>
+<body>
+
+<div class="box">
+
+<h1>
+⚙️ がちゃランド設定
+</h1>
+
+<div id="editor"></div>
+
+<br>
+
+<button class="save" onclick="saveData()">
+💾 保存
+</button>
+
+</div>
+
+<script>
+
+let data = {
+
+"📚 読書":{
+
+"絵本":[
+"1ページ読む",
+"好きな絵を見つける",
+"クイズをつくる"
+],
+
+"物語":[
+"主人公を見つける",
+"次を予想する"
+],
+
+"図鑑":[
+"1つ調べる"
+]
+
+},
+
+"✏️ お絵描き":{
+
+"動物":[
+"1ぴきかく",
+"好きなどうぶつをかく"
+],
+
+"キャラ":[
+"好きなキャラをかく"
+]
+
+},
+
+"📝 宿題":{
+
+"さんすう":[
+"1問やる",
+"3問やる"
+],
+
+"こくご":[
+"1ページ読む"
+]
+
+}
+
+};
+
+function drawEditor(){
+
+let html="";
+
+for(let activity in data){
+
+html += `
+<div class="activity">
+
+<h2>
+
+<input
+type="text"
+value="${activity}"
+onchange="
+changeActivity(
+'${activity}',
+this.value
+)
+">
+
+<button onclick="deleteActivity('${activity}')">
+🗑
+</button>
+
+</h2>
+`;
+
+for(let category in data[activity]){
+
+html+=`
+<div class="category">
+
+<h3>
+
+<input
+type="text"
+value="${category}"
+onchange="
+changeCategory(
+'${activity}',
+'${category}',
+this.value
+)
+">
+
+<button onclick="
+deleteCategory(
+'${activity}',
+'${category}'
+)">
+🗑
+</button>
+
+</h3>
+`;
+
+for(let i=0;i<data[activity][category].length;i++){
+
+html+=`
+<div class="mission">
+
+⭐
+<input
+type="text"
+value="${data[activity][category][i]}"
+onchange="
+changeMission(
+'${activity}',
+'${category}',
+${i},
+this.value
+)
+">
+
+<button onclick="
+deleteMission(
+'${activity}',
+'${category}',
+${i}
+)">
+🗑
+</button>
+
+</div>
+`;
+}
+
+html+=`
+
+<button onclick="
+addMission(
+'${activity}',
+'${category}'
+)">
+➕ ミッション追加
+</button>
+
+`;
+
+html+=`
+</div>
+`;
+
+}
+
+html+=`
+
+<br>
+
+<button onclick="
+addCategory(
+'${activity}'
+)">
+➕ カテゴリ追加
+</button>
+
+`;
+
+html+=`
+</div>
+`;
+
+}
+
+html+=`
+
+<button onclick="addActivity()">
+➕ 活動追加
+</button>
+
+`;
+
+document.getElementById("editor").innerHTML=html;
+
+}
+
+if(localStorage.getItem("gachaData")){
+
+data=
+JSON.parse(
+localStorage.getItem("gachaData")
+);
+
+}
+
+function addActivity(){
+
+let name=
+prompt("活動名");
+
+if(!name)return;
+
+data[name]={
+"カテゴリ1":[]
+};
+
+drawEditor();
+saveData();
+
+}
+
+function addCategory(activity){
+
+let name=
+prompt("カテゴリ名");
+
+if(!name)return;
+
+data[activity][name]=[];
+
+drawEditor();
+saveData();
+
+}
+
+function addMission(
+activity,
+category
+){
+
+let name=
+prompt("ミッション");
+
+if(!name)return;
+
+data[activity][category]
+.push(name);
+
+drawEditor();
+saveData();
+
+}
+
+function deleteActivity(
+activity
+){
+
+if(
+confirm(
+activity+"を削除しますか？"
+)
+){
+
+delete data[activity];
+
+drawEditor();
+saveData();
+
+}
+
+}
+
+function deleteCategory(
+activity,
+category
+){
+
+if(
+confirm(
+category+"を削除しますか？"
+)
+){
+
+delete data[activity][category];
+
+drawEditor();
+saveData();
+
+}
+
+}
+
+function deleteMission(
+activity,
+category,
+index
+){
+
+if(confirm("削除しますか？")){
+
+data[activity][category]
+.splice(index,1);
+
+drawEditor();
+saveData();
+
+}
+
+}
+
+function changeMission(
+activity,
+category,
+index,
+value
+){
+
+data[activity][category][index]=value;
+
+saveData();
+
+}
+
+function changeActivity(
+oldName,
+newName
+){
+
+if(oldName==newName)return;
+
+data[newName]=data[oldName];
+
+delete data[oldName];
+
+saveData();
+
+drawEditor();
+
+}
+
+function changeCategory(
+activity,
+oldName,
+newName
+){
+
+if(oldName==newName)return;
+
+data[activity][newName]
+=
+data[activity][oldName];
+
+delete data[activity][oldName];
+
+saveData();
+
+drawEditor();
+
+}
+
+
+drawEditor();
+
+</script>
+
+</body>
+</html>
